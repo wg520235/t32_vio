@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8.2)
+cmake_minimum_required(VERSION 3.10)
 project(t32vio VERSION 1.0.0 LANGUAGES CXX C)
 
 # C++11标准
@@ -15,7 +15,6 @@ option(ENABLE_OPTIMIZATION "Enable optimization flags" ON)
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross-compiling for ${CMAKE_SYSTEM_PROCESSOR}")
     set(BUILD_TESTS OFF)  # 交叉编译时禁用测试
-    set(ENABLE_OPTIMIZATION OFF)  # 使用工具链中的优化选项
 endif()
 
 # 查找Eigen3 (如果系统中有)
