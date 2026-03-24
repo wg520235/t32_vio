@@ -1,6 +1,6 @@
 #!/bin/bash
-# T32 VIO 交叉编译脚本
-# 用于在x86主机上编译MIPS目标代码
+# T32 VIO 交叉编译脚本 (君正T32专用)
+# 工具链路径: /opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03
 
 set -e
 
@@ -11,57 +11,33 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# 工具链配置
+TOOLCHAIN_ROOT="/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+COMPILER_C="${TOOLCHAIN_ROOT}/bin/mips-linux-gnu-gcc"
+COMPILER_CXX="${TOOLCHAIN_ROOT}/bin/mips-linux-gnu-g++"
+
 echo -e "${YELLOW}========================================${NC}"
 echo -e "${YELLOW}  T32 VIO 交叉编译脚本${NC}"
+echo -e "${YELLOW}  君正T32芯片专用${NC}"
 echo -e "${YELLOW}========================================${NC}"
 echo ""
 
-# 检查交叉编译器
-echo -e "${BLUE}[检查] 查找MIPS交叉编译器...${NC}"
+# 检查工具链
+echo -e "${BLUE}[检查] 验证T32工具链...${NC}"
 
-# 尝试不同的编译器名称
-COMPILER_C=""
-COMPILER_CXX=""
-
-for cc in mips-linux-gnu-gcc mipsel-linux-gnu-gcc mips-linux-gcc; do
-    if command -v $cc &> /dev/null; then
-        COMPILER_C=$cc
-        echo -e "${GREEN}✓ 找到C编译器: $cc${NC}"
-        break
-    fi
-done
-
-for cxx in mips-linux-gnu-g++ mipsel-linux-gnu-g++ mips-linux-g++; do
-    if command -v $cxx &> /dev/null; then
-        COMPILER_CXX=$cxx
-        echo -e "${GREEN}✓ 找到C++编译器: $cxx${NC}"
-        break
-    fi
-done
-
-if [ -z "$COMPILER_C" ] || [ -z "$COMPILER_CXX" ]; then
-    echo ""
-    echo -e "${RED}========================================${NC}"
-    echo -e "${RED}  错误: 未找到MIPS交叉编译器${NC}"
-    echo -e "${RED}========================================${NC}"
-    echo ""
-    echo "请安装MIPS交叉编译器:"
-    echo ""
-    echo "  Ubuntu/Debian:"
-    echo "    sudo apt-get update"
-    echo "    sudo apt-get install gcc-mips-linux-gnu g++-mips-linux-gnu"
-    echo ""
-    echo "  或从源码下载预编译工具链:"
-    echo "    https://releases.linaro.org/components/toolchain/binaries/"
-    echo "    https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/"
-    echo ""
-    echo "  安装后请确保编译器在PATH中:"
-    echo "    export PATH=/path/to/mips-toolchain/bin:\$PATH"
-    echo ""
+if [ ! -f "$COMPILER_C" ]; then
+    echo -e "${RED}错误: 未找到C编译器: $COMPILER_C${NC}"
     exit 1
 fi
 
+if [ ! -f "$COMPILER_CXX" ]; then
+    echo -e "${RED}错误: 未找到C++编译器: $COMPILER_CXX${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✓ 工具链路径: $TOOLCHAIN_ROOT${NC}"
 echo ""
+
 echo -e "${GREEN}编译器版本:${NC}"
 $COMPILER_C --version | head -1
 $COMPILER_CXX --version | head -1
@@ -83,14 +59,13 @@ cd "$BUILD_DIR"
 
 echo -e "${YELLOW}[1/4] 配置CMake...${NC}"
 echo "  工具链: ../cmake/mips-linux-gnu.cmake"
-echo "  编译器: $COMPILER_C / $COMPILER_CXX"
+echo "  C编译器: $COMPILER_C"
+echo "  C++编译器: $COMPILER_CXX"
 echo ""
 
-# 运行CMake，传递编译器路径
+# 运行CMake
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE=../cmake/mips-linux-gnu.cmake \
-    -DCMAKE_C_COMPILER=$COMPILER_C \
-    -DCMAKE_CXX_COMPILER=$COMPILER_CXX \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTS=OFF \
     2>&1 | tee cmake.log
@@ -139,7 +114,7 @@ if [ -f "libt32vio.a" ]; then
     
     # 检查MIPS架构
     echo "目标架构:"
-    ${COMPILER_C%-gcc}-objdump -f libt32vio.a 2>/dev/null | head -10 || echo "(无法读取目标信息，但编译成功)"
+    ${TOOLCHAIN_ROOT}/bin/mips-linux-gnu-objdump -f libt32vio.a 2>/dev/null | head -10 || echo "(使用工具链objdump检查)"
 else
     echo -e "${RED}错误: 未找到生成的库文件${NC}"
     exit 1
@@ -149,7 +124,7 @@ echo ""
 echo -e "${YELLOW}[4/4] 生成发布包...${NC}"
 
 # 创建发布目录
-RELEASE_DIR="t32vio-mips-${PROJECT_ROOT##*/}-$(date +%Y%m%d)"
+RELEASE_DIR="t32vio-mips-t32-$(date +%Y%m%d)"
 mkdir -p "$RELEASE_DIR"
 
 # 复制文件
@@ -160,16 +135,13 @@ cp ../FILELIST.md "$RELEASE_DIR/" 2>/dev/null || true
 
 # 创建使用说明
 cat > "$RELEASE_DIR/USAGE.txt" << 'EOF'
-T32 VIO 静态库使用说明
-======================
+T32 VIO 静态库使用说明 (君正T32芯片)
+======================================
 
 1. 链接库文件
-   在你的Makefile或CMake中添加:
+   在你的Makefile中添加:
    
-   target_link_libraries(your_app 
-       ${CMAKE_CURRENT_SOURCE_DIR}/libt32vio.a
-       pthread
-   )
+   LIBS += -L/path/to/lib -lt32vio -lpthread
 
 2. 包含头文件
    #include "t32vio.h"
@@ -197,6 +169,12 @@ T32 VIO 静态库使用说明
 
 6. 反初始化
    t32vio::deinit();
+
+硬件要求:
+  - 芯片: 君正T32
+  - 内存: 64MB+
+  - 摄像头: 320x240@180fps 全局曝光
+  - IMU: 200-400Hz
 
 更多信息请参考 README.md
 EOF

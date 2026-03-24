@@ -1,0 +1,2 @@
+/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03/bin/mips-linux-gnu-ar qc libt32vio.a  CMakeFiles/t32vio.dir/src/t32vio.cpp.o CMakeFiles/t32vio.dir/src/frontend.cpp.o CMakeFiles/t32vio.dir/src/msckf.cpp.o
+/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03/bin/mips-linux-gnu-ranlib libt32vio.a

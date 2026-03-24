@@ -1,0 +1,42 @@
+T32 VIO 静态库使用说明 (君正T32芯片)
+======================================
+
+1. 链接库文件
+   在你的Makefile中添加:
+   
+   LIBS += -L/path/to/lib -lt32vio -lpthread
+
+2. 包含头文件
+   #include "t32vio.h"
+
+3. 初始化VIO
+   t32vio::Config config = t32vio::getDefaultConfig();
+   t32vio::init(&config);
+
+4. 输入数据
+   // IMU数据 (200Hz)
+   t32vio::ImuData imu = {...};
+   t32vio::imuInput(&imu);
+   
+   // 图像数据 (30-60Hz)
+   t32vio::ImageFrame image = {...};
+   t32vio::imageInput(&image);
+
+5. 获取位姿
+   t32vio::Pose pose;
+   if (t32vio::getPose(&pose) == 0) {
+       // pose.p[3] - 位置 x,y,z (米)
+       // pose.q[4] - 姿态四元数 w,x,y,z
+       // pose.v[3] - 速度 x,y,z (m/s)
+   }
+
+6. 反初始化
+   t32vio::deinit();
+
+硬件要求:
+  - 芯片: 君正T32
+  - 内存: 64MB+
+  - 摄像头: 320x240@180fps 全局曝光
+  - IMU: 200-400Hz
+
+更多信息请参考 README.md
