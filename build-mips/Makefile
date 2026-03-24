@@ -169,6 +169,19 @@ t32vio/fast:
 	$(MAKE) -f CMakeFiles/t32vio.dir/build.make CMakeFiles/t32vio.dir/build
 .PHONY : t32vio/fast
 
+#=============================================================================
+# Target rules for targets named t32_vio_demo
+
+# Build rule for target.
+t32_vio_demo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 t32_vio_demo
+.PHONY : t32_vio_demo
+
+# fast build rule for target.
+t32_vio_demo/fast:
+	$(MAKE) -f examples/CMakeFiles/t32_vio_demo.dir/build.make examples/CMakeFiles/t32_vio_demo.dir/build
+.PHONY : t32_vio_demo/fast
+
 src/frontend.o: src/frontend.cpp.o
 
 .PHONY : src/frontend.o
@@ -263,6 +276,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... t32vio"
+	@echo "... t32_vio_demo"
 	@echo "... src/frontend.o"
 	@echo "... src/frontend.i"
 	@echo "... src/frontend.s"

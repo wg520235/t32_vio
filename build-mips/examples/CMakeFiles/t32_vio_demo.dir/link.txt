@@ -1,0 +1,1 @@
+/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03/bin/mips-linux-gnu-g++ --sysroot=/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03/mips-linux-gnu/libc  -mips32r2 -mhard-float -O2 -std=c++11 -ffunction-sections -fdata-sections -O3 -DNDEBUG  -static -Wl,--gc-sections CMakeFiles/t32_vio_demo.dir/t32_vio_demo.cpp.o  -o t32_vio_demo  ../libt32vio.a -lpthread 

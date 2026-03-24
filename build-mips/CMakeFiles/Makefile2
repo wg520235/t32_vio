@@ -54,18 +54,38 @@ CMAKE_BINARY_DIR = /root/.openclaw/workspace-vision-positioning/projects/t32-vio
 
 # The main recursive "all" target.
 all: CMakeFiles/t32vio.dir/all
+all: examples/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: examples/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/t32vio.dir/clean
+clean: examples/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory examples
+
+# Recursive "all" directory target.
+examples/all: examples/CMakeFiles/t32_vio_demo.dir/all
+
+.PHONY : examples/all
+
+# Recursive "preinstall" directory target.
+examples/preinstall:
+
+.PHONY : examples/preinstall
+
+# Recursive "clean" directory target.
+examples/clean: examples/CMakeFiles/t32_vio_demo.dir/clean
+
+.PHONY : examples/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/t32vio.dir
@@ -74,7 +94,7 @@ clean: CMakeFiles/t32vio.dir/clean
 CMakeFiles/t32vio.dir/all:
 	$(MAKE) -f CMakeFiles/t32vio.dir/build.make CMakeFiles/t32vio.dir/depend
 	$(MAKE) -f CMakeFiles/t32vio.dir/build.make CMakeFiles/t32vio.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles --progress-num=1,2,3,4 "Built target t32vio"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles --progress-num=3,4,5,6 "Built target t32vio"
 .PHONY : CMakeFiles/t32vio.dir/all
 
 # Build rule for subdir invocation for target.
@@ -93,6 +113,33 @@ t32vio: CMakeFiles/t32vio.dir/rule
 CMakeFiles/t32vio.dir/clean:
 	$(MAKE) -f CMakeFiles/t32vio.dir/build.make CMakeFiles/t32vio.dir/clean
 .PHONY : CMakeFiles/t32vio.dir/clean
+
+#=============================================================================
+# Target rules for target examples/CMakeFiles/t32_vio_demo.dir
+
+# All Build rule for target.
+examples/CMakeFiles/t32_vio_demo.dir/all: CMakeFiles/t32vio.dir/all
+	$(MAKE) -f examples/CMakeFiles/t32_vio_demo.dir/build.make examples/CMakeFiles/t32_vio_demo.dir/depend
+	$(MAKE) -f examples/CMakeFiles/t32_vio_demo.dir/build.make examples/CMakeFiles/t32_vio_demo.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles --progress-num=1,2 "Built target t32_vio_demo"
+.PHONY : examples/CMakeFiles/t32_vio_demo.dir/all
+
+# Build rule for subdir invocation for target.
+examples/CMakeFiles/t32_vio_demo.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles 6
+	$(MAKE) -f CMakeFiles/Makefile2 examples/CMakeFiles/t32_vio_demo.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles 0
+.PHONY : examples/CMakeFiles/t32_vio_demo.dir/rule
+
+# Convenience name for target.
+t32_vio_demo: examples/CMakeFiles/t32_vio_demo.dir/rule
+
+.PHONY : t32_vio_demo
+
+# clean rule for target.
+examples/CMakeFiles/t32_vio_demo.dir/clean:
+	$(MAKE) -f examples/CMakeFiles/t32_vio_demo.dir/build.make examples/CMakeFiles/t32_vio_demo.dir/clean
+.PHONY : examples/CMakeFiles/t32_vio_demo.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

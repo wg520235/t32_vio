@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/t32vio.h
+cstdint
+-
+cstddef
+-
+
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/examples/t32_vio_demo.cpp
+t32vio.h
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/examples/t32vio.h
+cstdio
+-
+cstring
+-
+cstdlib
+-
+fcntl.h
+-
+unistd.h
+-
+termios.h
+-
+signal.h
+-
+sys/time.h
+-
+

@@ -5,3 +5,10 @@
 /root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles/rebuild_cache.dir
 /root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles/edit_cache.dir
 /root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/CMakeFiles/t32vio.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/install/strip.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/install/local.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/install.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/list_install_components.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/rebuild_cache.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/edit_cache.dir
+/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips/examples/CMakeFiles/t32_vio_demo.dir

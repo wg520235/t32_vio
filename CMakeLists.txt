@@ -83,6 +83,12 @@ install(DIRECTORY include/
     FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
 
+# 示例程序
+option(BUILD_EXAMPLES "Build example programs" ON)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 # 测试
 if(BUILD_TESTS)
     enable_testing()
