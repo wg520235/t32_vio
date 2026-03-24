@@ -11,6 +11,13 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_TESTS "Build tests" ON)
 option(ENABLE_OPTIMIZATION "Enable optimization flags" ON)
 
+# 检测交叉编译
+if(CMAKE_CROSSCOMPILING)
+    message(STATUS "Cross-compiling for ${CMAKE_SYSTEM_PROCESSOR}")
+    set(BUILD_TESTS OFF)  # 交叉编译时禁用测试
+    set(ENABLE_OPTIMIZATION OFF)  # 使用工具链中的优化选项
+endif()
+
 # 查找Eigen3 (如果系统中有)
 find_package(Eigen3 QUIET)
 if(NOT EIGEN3_FOUND)
@@ -25,8 +32,8 @@ include_directories(
     ${EIGEN3_INCLUDE_DIR}
 )
 
-# 编译选项
-if(ENABLE_OPTIMIZATION)
+# 编译选项 (仅在非交叉编译时启用主机优化)
+if(ENABLE_OPTIMIZATION AND NOT CMAKE_CROSSCOMPILING)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         add_compile_options(-O3 -march=native -ffast-math)
         add_compile_options(-funroll-loops -fomit-frame-pointer)
@@ -84,5 +91,8 @@ message(STATUS "  Version: ${PROJECT_VERSION}")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Optimization: ${ENABLE_OPTIMIZATION}")
-message(STATUS "  Eigen3: ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "  Cross-compiling: ${CMAKE_CROSSCOMPILING}")
+if(NOT CMAKE_CROSSCOMPILING)
+    message(STATUS "  Eigen3: ${EIGEN3_INCLUDE_DIR}")
+endif()
 message(STATUS "")
