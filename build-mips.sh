@@ -1,6 +1,6 @@
 #!/bin/bash
 # T32 VIO 交叉编译脚本 (君正T32专用)
-# 工具链路径: /opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03
+# 自动检测工具链路径
 
 set -e
 
@@ -11,8 +11,27 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# 工具链配置
-TOOLCHAIN_ROOT="/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+# 自动检测工具链路径
+TOOLCHAIN_ROOT=""
+
+# 尝试常见路径
+for path in \
+    "/opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03" \
+    "/opt/mips-gcc540-glibc222-r3.3.7.mxu2.mem03" \
+    "$T32_TOOLCHAIN" \
+    "$HOME/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+do
+    if [ -n "$path" ] && [ -f "$path/bin/mips-linux-gnu-gcc" ]; then
+        TOOLCHAIN_ROOT="$path"
+        break
+    fi
+done
+
+# 如果环境变量设置了，使用环境变量
+if [ -n "$T32_TOOLCHAIN" ] && [ -f "$T32_TOOLCHAIN/bin/mips-linux-gnu-gcc" ]; then
+    TOOLCHAIN_ROOT="$T32_TOOLCHAIN"
+fi
+
 COMPILER_C="${TOOLCHAIN_ROOT}/bin/mips-linux-gnu-gcc"
 COMPILER_CXX="${TOOLCHAIN_ROOT}/bin/mips-linux-gnu-g++"
 
@@ -25,13 +44,17 @@ echo ""
 # 检查工具链
 echo -e "${BLUE}[检查] 验证T32工具链...${NC}"
 
-if [ ! -f "$COMPILER_C" ]; then
-    echo -e "${RED}错误: 未找到C编译器: $COMPILER_C${NC}"
-    exit 1
-fi
-
-if [ ! -f "$COMPILER_CXX" ]; then
-    echo -e "${RED}错误: 未找到C++编译器: $COMPILER_CXX${NC}"
+if [ -z "$TOOLCHAIN_ROOT" ] || [ ! -f "$COMPILER_C" ]; then
+    echo -e "${RED}错误: 未找到T32工具链${NC}"
+    echo ""
+    echo "请安装工具链到以下位置之一:"
+    echo "  - /opt/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+    echo "  - /opt/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+    echo "  - ~/t32_toolchain/mips-gcc540-glibc222-r3.3.7.mxu2.mem03"
+    echo ""
+    echo "或设置环境变量:"
+    echo "  export T32_TOOLCHAIN=/path/to/your/toolchain"
+    echo ""
     exit 1
 fi
 

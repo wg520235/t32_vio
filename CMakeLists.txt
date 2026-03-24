@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.8)
 project(t32vio VERSION 1.0.0 LANGUAGES CXX C)
 
 # C++11标准
