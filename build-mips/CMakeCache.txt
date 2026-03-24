@@ -239,6 +239,9 @@ ENABLE_OPTIMIZATION:BOOL=ON
 //The directory containing a CMake configuration file for Eigen3.
 Eigen3_DIR:PATH=Eigen3_DIR-NOTFOUND
 
+//Forcibly set by CMakeLists.txt.
+THREADS_PTHREAD_ARG:STRING=0
+
 //Value Computed by CMake
 t32vio_BINARY_DIR:STATIC=/root/.openclaw/workspace-vision-positioning/projects/t32-vio/build-mips
 
@@ -328,10 +331,6 @@ CMAKE_GENERATOR_INSTANCE:INTERNAL=
 CMAKE_GENERATOR_PLATFORM:INTERNAL=
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
-//Test CMAKE_HAVE_LIBC_PTHREAD
-CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=
-//Have include pthread.h
-CMAKE_HAVE_PTHREAD_H:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
 CMAKE_HOME_DIRECTORY:INTERNAL=/root/.openclaw/workspace-vision-positioning/projects/t32-vio
@@ -397,8 +396,4 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//Details about finding Threads
-FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
-//Result of TRY_COMPILE
-THREADS_HAVE_PTHREAD_ARG:INTERNAL=TRUE
 

@@ -38,6 +38,5 @@ set(CMAKE_CXX_FLAGS "-mips32r2 -mhard-float -O2 -std=c++11 -ffunction-sections -
 # 链接选项
 set(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--gc-sections" CACHE STRING "Linker flags")
 
-# 禁用一些在嵌入式平台可能有问题的特性
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+# 交叉编译时线程库设置
+set(THREADS_PTHREAD_ARG "0" CACHE STRING "Forcibly set by CMakeLists.txt." FORCE)

@@ -62,8 +62,14 @@ target_include_directories(t32vio PUBLIC
 )
 
 # 链接线程库
-find_package(Threads REQUIRED)
-target_link_libraries(t32vio PUBLIC Threads::Threads)
+# 交叉编译时跳过线程检测
+if(CMAKE_CROSSCOMPILING)
+    # 静态库不需要链接线程库，由最终可执行程序链接
+    message(STATUS "Cross-compiling: skipping thread library link for static library")
+else()
+    find_package(Threads REQUIRED)
+    target_link_libraries(t32vio PUBLIC Threads::Threads)
+endif()
 
 # 安装规则
 install(TARGETS t32vio
