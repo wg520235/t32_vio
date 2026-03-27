@@ -46,11 +46,13 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-Wall -Wextra -Wno-unused-parameter)
 endif()
 
-# 源文件
+# 源文件 - 包含LEVIO增强模块
 set(T32VIO_SOURCES
     src/t32vio.cpp
     src/frontend.cpp
+    src/frontend_levio.cpp
     src/msckf.cpp
+    src/imu_preint_levio.c
 )
 
 # 创建静态库

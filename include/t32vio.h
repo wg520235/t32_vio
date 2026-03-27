@@ -173,6 +173,11 @@ struct Config {
 struct CameraIntrinsics {
     float fx, fy, cx, cy;
     float k1, k2, p1, p2, k3;
+    
+    CameraIntrinsics() : fx(240.0f), fy(240.0f), cx(160.0f), cy(120.0f),
+                         k1(0), k2(0), p1(0), p2(0), k3(0) {}
+    CameraIntrinsics(float fx_, float fy_, float cx_, float cy_)
+        : fx(fx_), fy(fy_), cx(cx_), cy(cy_), k1(0), k2(0), p1(0), p2(0), k3(0) {}
 };
 
 struct ImuCamExtrinsics {
@@ -293,6 +298,25 @@ bool msckfIsInitialized(void);
 void msckfReset(void);
 
 /* ============================================================================
+ * LEVIO增强API
+ * ============================================================================ */
+
+// LEVIO风格的关键帧判断 (包含视差计算)
+bool levioNeedKeyframe(const FeatureFrame* curr,
+                        const FeatureFrame* prev,
+                        const CameraIntrinsics* K,
+                        uint64_t curr_time_us,
+                        uint64_t last_kf_time_us);
+
+// 计算归一化视差 (LEVIO方法)
+float levioCalculateParallax(const FeatureFrame* curr,
+                              const FeatureFrame* prev,
+                              const CameraIntrinsics* K);
+
+// 跟踪成功率
+float levioTrackSuccessRate(const FeatureFrame* curr, const FeatureFrame* prev);
+
+/* ============================================================================
  * 数学工具
  * ============================================================================ */
 
@@ -310,5 +334,96 @@ void vec3Normalize(Vec3* v);
 }
 
 } // namespace t32vio
+
+/* ============================================================================
+ * LEVIO预积分C API (外部接口)
+ * ============================================================================ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// LEVIO预积分数据类型
+typedef struct {
+    float x, y, z;
+} levio_vec3_t;
+
+typedef struct {
+    float w, x, y, z;
+} levio_quat_t;
+
+typedef struct {
+    float m[9];
+} levio_mat3x3_t;
+
+typedef struct {
+    uint64_t timestamp_us;
+    levio_vec3_t gyro;
+    levio_vec3_t acc;
+} levio_imu_t;
+
+typedef struct {
+    levio_vec3_t p;
+    levio_vec3_t v;
+    levio_quat_t q;
+    levio_vec3_t bg;
+    levio_vec3_t ba;
+} levio_imu_state_t;
+
+typedef struct {
+    float dt;
+    uint64_t start_time_us;
+    uint64_t end_time_us;
+    levio_vec3_t delta_p;
+    levio_vec3_t delta_v;
+    levio_quat_t delta_q;
+    levio_mat3x3_t J_p_bg;
+    levio_mat3x3_t J_v_bg;
+    levio_mat3x3_t J_q_bg;
+    levio_mat3x3_t J_p_ba;
+    levio_mat3x3_t J_v_ba;
+    float covariance[9][9];
+} levio_preint_t;
+
+// LEVIO预积分API
+void levio_preint_init(levio_preint_t* preint, uint64_t start_time_us);
+void levio_preint_reset(levio_preint_t* preint, uint64_t start_time_us);
+void levio_preint_integrate_step(levio_preint_t* preint,
+                                  const levio_imu_t* imu_prev,
+                                  const levio_imu_t* imu_curr,
+                                  const levio_vec3_t* gyro_bias,
+                                  const levio_vec3_t* acc_bias,
+                                  float noise_gyro,
+                                  float noise_acc);
+void levio_preint_correct_bias(levio_preint_t* preint,
+                                const levio_vec3_t* delta_bg,
+                                const levio_vec3_t* delta_ba);
+void levio_preint_propagate_state(const levio_imu_state_t* state_prev,
+                                   levio_imu_state_t* state_curr,
+                                   const levio_preint_t* preint);
+
+// 数学工具
+void levio_vec3_add(const levio_vec3_t* a, const levio_vec3_t* b, levio_vec3_t* out);
+void levio_vec3_sub(const levio_vec3_t* a, const levio_vec3_t* b, levio_vec3_t* out);
+void levio_vec3_scale(const levio_vec3_t* v, float s, levio_vec3_t* out);
+float levio_vec3_norm(const levio_vec3_t* v);
+float levio_vec3_dot(const levio_vec3_t* a, const levio_vec3_t* b);
+void levio_vec3_cross(const levio_vec3_t* a, const levio_vec3_t* b, levio_vec3_t* out);
+
+void levio_quat_normalize(levio_quat_t* q);
+void levio_quat_multiply(const levio_quat_t* q1, const levio_quat_t* q2, levio_quat_t* out);
+void levio_quat_rotate(const levio_quat_t* q, const levio_vec3_t* v, levio_vec3_t* out);
+
+void levio_mat3x3_identity(levio_mat3x3_t* A);
+void levio_mat3x3_add(const levio_mat3x3_t* A, const levio_mat3x3_t* B, levio_mat3x3_t* C);
+void levio_mat3x3_sub(const levio_mat3x3_t* A, const levio_mat3x3_t* B, levio_mat3x3_t* C);
+void levio_mat3x3_mul(const levio_mat3x3_t* A, const levio_mat3x3_t* B, levio_mat3x3_t* C);
+void levio_mat3x3_vec3_mul(const levio_mat3x3_t* A, const levio_vec3_t* v, levio_vec3_t* out);
+void levio_mat3x3_skew_symmetric(const levio_vec3_t* v, levio_mat3x3_t* out);
+void levio_mat3x3_rodrigues_exp(const levio_vec3_t* phi, levio_mat3x3_t* R);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // T32VIO_HPP
